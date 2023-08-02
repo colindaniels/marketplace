@@ -8,13 +8,15 @@
             </div>
         </div>
         <div class="flex-col gap-20">
-            <div class="selector-box">
-                <div class="selector" :style="{ top: `${selectorTop}px` }"></div>
-                <div class="flex height-100">
-                    <div class="option selected"><h4>Quick Info</h4></div>
-                    <div class="option"><h4>Analytics</h4></div>
-                    <div class="option"><h4>Settings</h4></div>
-                </div>
+            <div class="selector-box flex">
+                <div class="selector" :style="{ left: `${selectorLeft}px` }"></div>
+                <ol class="flex height-100">
+                    <li class="option"
+                        :class="{ selected: selectedIndex == index }" v-for="(menuItem, index) in menuItems" :key="index"
+                        @click="handleItemClick($event.currentTarget); selectedIndex = index;">
+                        <h4>{{ menuItem }}</h4>
+                    </li>
+                </ol>
 
             </div>
             <div class="flex gap-5 align-center"><h3>$453.67</h3><h5 class="color-status-success">3.2%</h5></div>
@@ -28,6 +30,21 @@
 
     </div>
 </template>
+
+<script setup lang="ts">
+const selectorLeft = ref(4);
+const menuItems = [
+    'Quick Info',
+    'Analytics',
+    'Settings'
+]
+const selectedIndex = ref(0)
+
+function handleItemClick(clickedElement) {
+    selectorLeft.value = clickedElement.offsetLeft
+}
+
+</script>
 
 <style scoped lang="scss">
 .card {
@@ -58,31 +75,40 @@
 }
 
 .selector-box {
-    width: 392px;
     height: 46px;
     background-color: $color-light-blue-gray;
     border-radius: 10px;
     padding: 4px;
-
+    position: relative;
+    align-items: center;
 
     .option {
-        border-radius: 10px;
         color: $color-text-light;
         width: 130px;
+        height: 38px;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 1;
+        cursor: pointer;
+        transition: 0.1s all ease-in-out;
+        &.selected {
+            color: $color-text-dark;
+        }
 
     }
 }
 
 .selector {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 40px;
     background: white;
+    border-radius: 10px;
     z-index: 0;
+    height: 38px;
+    transition: left 0.2s ease-in-out;
+    box-shadow: $box-shadow;
 }
 
 </style>
