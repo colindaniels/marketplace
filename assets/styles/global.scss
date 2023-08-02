@@ -1,0 +1,203 @@
+body {
+    background: $color-background;
+    margin: 0;
+    font-family: Helvetica, Arial, sans-serif;
+    color: $color-text-dark;
+    overflow-x: hidden;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: 100vh;
+    letter-spacing: 0.03rem
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+
+h1 {
+    font-size: $font-size-huge;
+    margin: 0;
+}
+
+h2 {
+    font-size: $font-size-large;
+    margin: 0;
+}
+
+h3 {
+    font-size: $font-size-medium;
+    margin: 0;
+}
+
+h4 {
+    font-size: $font-size-normal;
+    margin: 0;
+    font-weight: 500;
+}
+
+h5 {
+    font-size: $font-size-small;
+    margin: 0;
+}
+
+h6 {
+    font-size: $font-size-tiny;
+    margin: 0;
+}
+
+
+.weight-thin {
+    font-weight: 100;
+}
+
+.weight-extra-light {
+    font-weight: 200;
+}
+
+.weight-light {
+    font-weight: 300;
+}
+
+.weight-regular {
+    font-weight: 400;
+}
+
+.weight-medium {
+    font-weight: 500;
+}
+
+.weight-semi-bold {
+    font-weight: 600;
+}
+
+.weight-bold {
+    font-weight: 700;
+}
+
+.weight-extra-bold {
+    font-weight: 800;
+}
+
+.weight-black {
+    font-weight: 900;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.justify-center {
+    justify-content: center;
+}
+.align-center {
+    align-items: center;
+}
+
+.gap-5 {
+    gap: 5px;
+}
+.gap-10 {
+    gap: 10px;
+}
+.gap-15 {
+    gap: 15px;
+}
+.gap-20 {
+    gap: 20px;
+}
+.gap-25 {
+    gap: 25px;
+}
+.gap-30 {
+    gap: 30px;
+}
+.gap-35 {
+    gap: 35px;
+}
+.gap-40 {
+    gap: 40px;
+}
+.gap-45 {
+    gap: 45px;
+}
+.gap-50 {
+    gap: 50px;
+}
+.gap-55 {
+    gap: 55px;
+}
+.gap-60 {
+    gap: 60px;
+}
+
+
+.gap-100 {
+    gap: 100px;
+}
+.gap-200 {
+    gap: 200px;
+}
+ol {
+    padding: 0px;
+    margin: 0;
+}
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.color-text-dark {
+    color: $color-text-dark;
+}
+
+.color-text-light {
+    color: $color-text-light;
+}
+
+.divider {
+    width: 100%;
+    background-color: $color-light-gray;
+    height: 2px;
+    &.vertical {
+        width: 2px;
+        height: 100%;
+    }
+}
+
+.no-shrink {
+    flex-shrink: 0;
+}
+
+.height-100 {
+    height: 100%;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.relative {
+    position: relative;
+}
+
+.default-top {
+    margin-top: 50px;
+}
+.color-status-success {
+    color: $color-status-success;
+}
+
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
