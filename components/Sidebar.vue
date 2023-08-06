@@ -11,14 +11,14 @@
                 <div class="selector" :style="{ top: `${selectorTop}px` }"></div>
                 <ol>
                     <li class="hover-levitate" :class="{ selected: selectedIndex == index }" v-for="(menuItem, index) in menuItems" :key="index"
-                        @click="handleItemClick($event.currentTarget); selectedIndex = index;">
+                        @click="handleItemClick($event.currentTarget, index); selectedIndex = index;">
                         <font-awesome-icon :icon="menuItem.icon" />
                         <h4>{{ menuItem.title }}</h4>
                     </li>
                 </ol>
                 <ol>
                     <li :class="{ selected: selectedIndex == 4 }"
-                        @click="handleItemClick($event.currentTarget); selectedIndex = 4;"><font-awesome-icon
+                        @click="handleItemClick($event.currentTarget, 4); selectedIndex = 4;"><font-awesome-icon
                             :icon="['fas', 'gear']" />
                         <h4>Settings</h4>
                     </li>
@@ -35,6 +35,7 @@
 </template>
   
 <script setup>
+
 const selectorTop = ref(0);
 const menuItems = [
     { title: 'Dashboard', icon: ['fas', 'grid-2'] },
@@ -46,7 +47,8 @@ const menuItems = [
 const selectedIndex = ref(0)
 const collapsed = ref(false)
 
-function handleItemClick(clickedElement) {
+
+function handleItemClick(clickedElement, index) {
     selectorTop.value = clickedElement.offsetTop;
 }
 </script>
@@ -54,7 +56,6 @@ function handleItemClick(clickedElement) {
 <style lang="scss" scoped>
 .nav-container {
     position: relative;
-    padding-right: 45px;
     &.collapsed {
         nav {
             width: 45px;
@@ -100,8 +101,12 @@ nav {
             cursor: pointer;
             align-items: center;
             padding-left: 15px;
+            transition: 0.1s ease-in-out;
             &:hover, &.selected {
                 color: $color-primary;
+            }
+            &:hover {
+                transform: translate(1px, -1px);
             }
         }
 
@@ -119,7 +124,8 @@ nav {
 }
 
 .sidebar-divider {
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     transition: left 0.2s ease-in-out;
 
     .collapse-box {

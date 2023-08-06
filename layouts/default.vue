@@ -1,8 +1,8 @@
 <template>
   <div class="flex">
-    <Sidebar />
+    <Sidebar/>
     <main>
-      <slot />
+      <slot></slot>
     </main>
 
   </div>
@@ -14,5 +14,7 @@
 <style lang="scss" scoped>
 main {
   width: 100%;
+  padding-left: 45px;
+  padding-bottom: 45px;
 }
 </style>
