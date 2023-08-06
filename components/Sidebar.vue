@@ -35,7 +35,7 @@
 </template>
   
 <script setup>
-
+import { useMenuStore } from '@/stores/menu'
 const selectorTop = ref(0);
 const menuItems = [
     { title: 'Dashboard', icon: ['fas', 'grid-2'] },
@@ -44,12 +44,13 @@ const menuItems = [
     { title: 'Advanced Search', icon: ['fas', 'chart-line-up'] },
 ];
 
-const selectedIndex = ref(0)
+const selectedIndex = useMenuStore().sidebar
 const collapsed = ref(false)
 
 
 function handleItemClick(clickedElement, index) {
     selectorTop.value = clickedElement.offsetTop;
+    useMenuStore().sidebar = index
 }
 </script>
   
