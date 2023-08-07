@@ -337,3 +337,13 @@ a {
 .color-marketplace-green {
     color: #05823F;
 }
+
+.link {
+    text-decoration: underline;
+    cursor: pointer;
+    text-underline-offset: 3px;
+    transition: all 0.1s ease-in-out;
+    &:hover {
+        filter: brightness(70%);
+    }
+}

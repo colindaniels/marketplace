@@ -73,6 +73,7 @@ function handleInput() {
     .placeholder {
         top: 0;
         transform: translate(-7px, -22px);
+        font-size: $font-size-tiny;
     }
 }
 .input-box.focused {

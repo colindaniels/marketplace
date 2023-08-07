@@ -22,4 +22,5 @@ defineProps({
     box-shadow: $box-shadow
 
 }
+
 </style>
