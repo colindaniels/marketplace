@@ -1,14 +1,13 @@
 <template>
-    <div>Index</div>
+    <div>
+        Dashboard
+    </div>
 </template>
 
 <script setup lang="ts">
 
-
-
 </script>
 
-
-<style scoped lang="scss">
+<style scoped lang="sass">
 
 </style>

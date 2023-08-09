@@ -8,6 +8,7 @@
                 <div class="card sm">
                     <PriceCheckerStepsSearchKeywords v-if="current_step == 0" @nextStep="current_step++" />
                     <PriceCheckerStepsSelectCategory v-if="current_step == 1" @nextStep="current_step++" />
+                    <PriceCheckerStepsSelectAspects v-if="current_step == 2" @nextStep="current_step++" />
                 </div>
             </div>
         </div>

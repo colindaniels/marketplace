@@ -27,6 +27,13 @@ function handleInput() {
     emit('update:modelValue', input_value.value);
 }
 
+watch(input_value, () => {
+    if (input_value.value.length) {
+        input_focused.value = true
+        placeholder_raise.value = true
+    }
+})
+
 </script>
 
 <style scoped lang="scss">

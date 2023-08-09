@@ -2,26 +2,29 @@
     <div class="flex gap-40 nav-container" :class="{ collapsed: collapsed }">
         <nav class="no-shrink default-top">
             <ol>
-                <li class="logo">
+                <NuxtLink @click="hideSelector" to="/" class="logo">
                     <img src="@/assets/brand/logo.svg" alt="" />
                     <h4 class="color-text-dark nowrap bold">Marketplace API</h4>
-                </li>
+                </NuxtLink>
             </ol>
             <div class="selectors">
-                <div class="selector" :style="{ top: `${selectorTop}px` }"></div>
+                <div class="selector" v-if="!hidden" :style="{ top: `${selectorTop}px` }"></div>
                 <ol>
-                    <li class="hover-levitate" :class="{ selected: selectedIndex == index }" v-for="(menuItem, index) in menuItems" :key="index"
+                    <NuxtLink :to="menuItem.link" class="hover-levitate" :class="{ selected: selectedIndex == index }"
+                        v-for="(menuItem, index) in menuItems" :key="index"
                         @click="handleItemClick($event.currentTarget, index); selectedIndex = index;">
                         <font-awesome-icon :icon="menuItem.icon" />
                         <h4>{{ menuItem.title }}</h4>
-                    </li>
+
+                    </NuxtLink>
                 </ol>
                 <ol>
-                    <li :class="{ selected: selectedIndex == 4 }"
-                        @click="handleItemClick($event.currentTarget, 4); selectedIndex = 4;"><font-awesome-icon
-                            :icon="['fas', 'gear']" />
+                    <NuxtLink :class="{ selected: selectedIndex == 4 }"
+                        @click="handleItemClick($event.currentTarget, 4); selectedIndex = 4;">
+                        <font-awesome-icon :icon="['fas', 'gear']" />
                         <h4>Settings</h4>
-                    </li>
+
+                    </NuxtLink>
                 </ol>
             </div>
 
@@ -35,32 +38,43 @@
 </template>
   
 <script setup>
-import { useMenuStore } from '@/stores/menu'
 const selectorTop = ref(0);
 const menuItems = [
-    { title: 'Dashboard', icon: ['fas', 'grid-2'] },
-    { title: 'Price Checker', icon: ['fas', 'magnifying-glass'] },
-    { title: 'Saved Searches', icon: ['fas', 'star'] },
-    { title: 'Advanced Search', icon: ['fas', 'chart-line-up'] },
+    { title: 'Dashboard', link: 'dashboard', icon: ['fas', 'grid-2'] },
+    { title: 'Price Checker', link: 'price-checker', icon: ['fas', 'magnifying-glass'] },
+    { title: 'Saved Searches', link: 'saved-searches', icon: ['fas', 'star'] },
+    { title: 'Advanced Search', link: 'advanced-search', icon: ['fas', 'chart-line-up'] },
 ];
 
-const selectedIndex = useMenuStore().sidebar
+const selectedIndex = ref(0)
 const collapsed = ref(false)
+
+const hidden = ref(false)
 
 
 function handleItemClick(clickedElement, index) {
     selectorTop.value = clickedElement.offsetTop;
-    useMenuStore().sidebar = index
+    selectedIndex.value = index
+    hidden.value = false
 }
+
+function hideSelector() {
+    selectedIndex.value = -1
+    hidden.value = true
+
+}
+
 </script>
   
 <style lang="scss" scoped>
 .nav-container {
     position: relative;
+
     &.collapsed {
         nav {
             width: 45px;
         }
+
         .collapse-box svg {
             transform: rotate(180deg);
         }
@@ -94,18 +108,22 @@ nav {
         flex-direction: column;
         gap: 5px;
 
-        li {
+        a {
             display: flex;
+            align-items: center;
             gap: 15px;
+            color: inherit;
             color: $color-text-light;
             height: 45px;
             cursor: pointer;
-            align-items: center;
-            padding-left: 15px;
             transition: 0.1s ease-in-out;
-            &:hover, &.selected {
+            padding-left: 15px;
+
+            &:hover,
+            &.selected {
                 color: $color-primary;
             }
+
             &:hover {
                 transform: translate(1px, -1px);
             }
@@ -151,8 +169,10 @@ nav {
 
 }
 
-.logo img {
-    height: 1.5em;
+.logo {
+    img {
+        height: 1.5em;
+    }
 }
 </style>
   
