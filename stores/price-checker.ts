@@ -4,7 +4,6 @@ export const usePriceCheckerStore = defineStore('priceChecker', {
       recommended_category: [],
       primary_categories: [],
       selected_category: {},
-      aspects: [],
-      selected_aspects: {}
+      aspects: []
     }),
   })
