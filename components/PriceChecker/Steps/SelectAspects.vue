@@ -2,10 +2,10 @@
     <div class="flex-col gap-40" v-if="!pending">
         <div class="flex-col gap-20">
             <SlideBtn v-for="(values, name) in usePriceCheckerStore().aspects" @selected="selectAspects" :name="name"
-                :data="values" :current_value="usePriceCheckerStore().selected_aspects" />
+                :data="values"/>
         </div>
 
-        <Btn @click="$emit('nextStep')" :inactive="aspectsEmpty" class=" left-auto right-auto">Continue</Btn>
+        <Btn @click="$emit('nextStep')" class=" left-auto right-auto">Continue</Btn>
     </div>
     <div v-else>LOADING...</div>
 </template>
@@ -17,6 +17,11 @@ const { data, pending } = useFetch('/api/getAspects', { params: { new_url: usePr
 
 watch(data, () => {
     usePriceCheckerStore().aspects = data.value.aspects
+
+    Object.entries(usePriceCheckerStore().aspects).forEach(([key, value]) => {
+        console.log(key, value);
+    });
+
 })
 
 
@@ -30,9 +35,6 @@ function selectAspects(name: string, d: any, recent: any) {
     })
 
 }
-
-
-const aspectsEmpty = computed(() => Object.values(usePriceCheckerStore().selected_aspects).every(innerArr => innerArr.length === 0))
 
 </script>
 

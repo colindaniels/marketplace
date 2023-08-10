@@ -3,8 +3,8 @@
         <h5 class="weight-semi-bold">{{ name }}</h5>
         <div class="flex-wrap gap-10">
             <div class="btn flex align-center gap-15"
-                :class="{ selected: current_value.value == d.value || d.selected }" @click="select(d)"
-                v-for="d, i in data">
+                :class="{ selected: current_value?.value == d.value || d.selected }" @click="select(d)"
+                v-for="d in data">
                 <div v-if="unique" class="radio"></div>
                 <h5 class="value">{{ d.name }}</h5>
             </div>
@@ -17,7 +17,7 @@ const props = defineProps({
     name: String,
     data: Array,
     unique: Boolean,
-    current_value: [Object, Array]
+    current_value: Object
 })
 const emit = defineEmits()
 
