@@ -3,8 +3,8 @@
         <div class="flex gap-20 clickable" @click.stop="handleExpand('title');">
             <img src="@/assets/images/iphone.png" alt="">
             <div class="flex-col gap-5">
-                <h3>Apple iPhone X</h3>
-                <h4 class="color-text-light">Smartphones & Accessories</h4>
+                <h3>{{ title }}</h3>
+                <h4 class="color-text-light">{{ category }}</h4>
             </div>
             <font-awesome-icon :icon="['fas', 'angle-down']" size="xl" class="right-auto bottom-auto top-auto collapsable"
                 :class="{ collapse }" />
@@ -32,16 +32,21 @@
                             </div>
                         </div>
                         <div class="status-box color-status-standby-background collapsable" :class="{ collapse }">
-                            <h5 class=" color-status-standby">Sold Items Only</h5>
+                            <h5 class="color-status-standby">Sold Items Only</h5>
+                        </div>
+                    </div>
+                    <div class="flex-col gap-10 right-auto collapsable" :class="{ collapse }">
+                        <div class="flex-col gap-3">
+                            <h5 class="color-text-light">Analyzed Listings</h5>
+                            <div class="flex gap-5 right-auto">
+                                <h3>{{ listings?.length }}</h3>
+                            </div>
+                        </div>
+                        <div class="status-box color-status-standby-background right-auto">
+                            <h5 class="color-status-standby">{{ total_results }} total</h5>
                         </div>
                     </div>
 
-                    <div class="flex-col gap-3 right-auto collapsable" :class="{ collapse }">
-                        <h5 class="color-text-light">Total Results</h5>
-                        <div class="flex gap-5 right-auto">
-                            <h3>312</h3>
-                        </div>
-                    </div>
                 </div>
 
 
@@ -151,6 +156,15 @@
 </template>
 
 <script setup lang="ts">
+
+defineProps({
+    title: String,
+    total_results: String,
+    category: String,
+    listings: Array
+})
+
+
 const selectorLeft = ref(4);
 const selectorTop = ref(6);
 const menuItems = [
@@ -450,6 +464,7 @@ ol.side-selector {
                 width: 75px;
                 height: 75px;
             }
+
             .hover-indicator {
                 position: absolute;
                 width: 100%;
@@ -461,6 +476,7 @@ ol.side-selector {
                 border-radius: 7px;
                 transition: all 0.1s ease-in-out;
             }
+
             &:hover {
                 &::before {
                     position: absolute;
@@ -473,6 +489,7 @@ ol.side-selector {
                     transform: translate(-50%, -50%);
                     font-weight: bold;
                 }
+
                 .hover-indicator {
                     opacity: 0.4;
                 }
@@ -481,5 +498,4 @@ ol.side-selector {
 
     }
 
-}
-</style>
+}</style>

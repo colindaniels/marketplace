@@ -4,6 +4,7 @@ export const usePriceCheckerStore = defineStore('priceChecker', {
       recommended_category: [],
       primary_categories: [],
       selected_category: {},
-      aspects: []
+      aspects: [],
+      current_ebay_url: ''
     }),
   })

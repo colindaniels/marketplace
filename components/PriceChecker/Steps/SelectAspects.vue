@@ -17,11 +17,6 @@ const { data, pending } = useFetch('/api/getAspects', { params: { new_url: usePr
 
 watch(data, () => {
     usePriceCheckerStore().aspects = data.value.aspects
-
-    Object.entries(usePriceCheckerStore().aspects).forEach(([key, value]) => {
-        console.log(key, value);
-    });
-
 })
 
 
@@ -32,6 +27,7 @@ function selectAspects(name: string, d: any, recent: any) {
     useFetch('/api/getAspects', { params: { new_url: recent.value } }).then((response) => {
         data.value = response.data.value
         pending.value = false
+        usePriceCheckerStore().current_ebay_url = recent.value
     })
 
 }
