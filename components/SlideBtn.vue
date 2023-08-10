@@ -3,10 +3,10 @@
         <h5 class="weight-semi-bold">{{ name }}</h5>
         <div class="flex-wrap gap-10">
             <div class="btn flex align-center gap-15"
-                :class="{ selected: selected_value == value || selected_value?.includes(value) }" @click="select(value)"
-                v-for="value in values">
-                <div v-if="type == 'unique'" class="radio"></div>
-                <h5 class="value">{{ value }}</h5>
+                :class="{ selected: current_value.value == d.value || d.selected }" @click="select(d)"
+                v-for="d, i in data">
+                <div v-if="unique" class="radio"></div>
+                <h5 class="value">{{ d.name }}</h5>
             </div>
         </div>
     </div>
@@ -15,34 +15,24 @@
 <script setup lang="ts">
 const props = defineProps({
     name: String,
-    values: Array,
-    type: String,
-    current_value: [String, Array]
+    data: Array,
+    unique: Boolean,
+    current_value: [Object, Array]
 })
 const emit = defineEmits()
 
-const selected_value = ref(props.current_value || [])
 
-function select(value: any) {
-    if (props.type == 'unique') {
-        selected_value.value = value
-        emit('selected', props.name, selected_value.value)
+function select(d: any) {
+    if (props.unique) {
+        emit('selected', props.name, d)
 
     }
     else {
-        if (!selected_value.value.includes(value)) {
-            selected_value.value.push(value)
-        }
-        else {
-            selected_value.value = selected_value.value.filter(item => item !== value)
-        }
-        emit('selected', props.name, selected_value.value)
+        emit('selected', props.name, props.current_value, d);
     }
 
 }
-watch(props, () => {
-    selected_value.value = props.current_value
-})
+
 
 </script>
 
@@ -75,6 +65,7 @@ watch(props, () => {
                 height: 60%;
             }
         }
+
         .value {
             font-weight: 600;
         }
