@@ -1,7 +1,7 @@
 <template>
     <div class="progress-bar">
         <div v-for="step, index in steps" class="flex align-center">
-            <div class="step" :class="{ active: current_step >= index, hoverable: current_step >= index }">
+            <div @click="$emit('backtrack', index)" class="step" :class="{ active: current_step >= index, hoverable: current_step >= index }">
                 <font-awesome-icon :icon="step.icon" size="lg" />
                 <div class="text">
                     <h5>{{ step.name }}</h5>
@@ -52,6 +52,7 @@ const steps = ref([
         position: relative;
         display: flex;
         justify-content: center;
+        pointer-events: none;
 
         &.active {
             color: $color-primary;
@@ -67,6 +68,9 @@ const steps = ref([
             text-align: center;
             top: calc(100% + 10px);
             width: 120px;
+        }
+        &.hoverable {
+            pointer-events: all;
         }
 
         &.hoverable:hover {

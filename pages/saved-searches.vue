@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <Section title="Saved Searches">
         <AnalyticsCard></AnalyticsCard>
-    </div>
+    </Section>
 </template>
 
 <script setup lang="ts">

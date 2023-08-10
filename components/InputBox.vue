@@ -44,11 +44,12 @@ watch(input_value, () => {
     border: 2px solid $color-super-light-gray;
     height: 40px;
     transition: all 0.1s ease-in-out;
+    background-color: white;
     input {
         width: 100%;
         height: 100%;
         color: $color-text-dark;
-        font-size: $font-size-small;
+        font-size: $font-size-normal;
         font-weight: 600;
         border: none;
         z-index: 1;
@@ -65,8 +66,8 @@ watch(input_value, () => {
         padding-left: 10px;
         position: absolute;
         color: $color-text-light;
-        font-weight: 500;
-        font-size: $font-size-small;
+        font-weight: 400;
+        font-size: $font-size-normal;
         z-index: 0;
         transition: all 0.1s ease-in-out;
         top: 50%;
@@ -79,8 +80,8 @@ watch(input_value, () => {
     margin-top: 22px;
     .placeholder {
         top: 0;
-        transform: translate(-7px, -22px);
-        font-size: $font-size-tiny;
+        transform: translate(-7px, -25px);
+        font-size: $font-size-small;
     }
 }
 .input-box.focused {

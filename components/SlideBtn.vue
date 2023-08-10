@@ -6,7 +6,7 @@
                 :class="{ selected: selected_value == value || selected_value?.includes(value) }" @click="select(value)"
                 v-for="value in values">
                 <div v-if="type == 'unique'" class="radio"></div>
-                <h5>{{ value }}</h5>
+                <h5 class="value">{{ value }}</h5>
             </div>
         </div>
     </div>
@@ -74,6 +74,9 @@ watch(props, () => {
                 width: 60%;
                 height: 60%;
             }
+        }
+        .value {
+            font-weight: 600;
         }
     }
 
