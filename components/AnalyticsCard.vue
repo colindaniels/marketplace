@@ -27,7 +27,7 @@
                         <div class="flex-col gap-3">
                             <h5 class="color-text-light collapsable" :class="{ collapse }">Median Price</h5>
                             <div class="flex gap-5 align-center">
-                                <h3>$453.67</h3>
+                                <h3>{{ median_price }}</h3>
                                 <h5 class="color-status-success weight-bold">3.2%</h5>
                             </div>
                         </div>
@@ -42,6 +42,9 @@
                                 <h3>{{ listings?.length }}</h3>
                             </div>
                         </div>
+                        <div class="status-box color-status-error-background right-auto">
+                            <h5 class="color-status-error">12 excluded</h5>
+                        </div>
                         <div class="status-box color-status-standby-background right-auto">
                             <h5 class="color-status-standby">{{ total_results }} total</h5>
                         </div>
@@ -52,28 +55,18 @@
 
                 <div class="divider dashed light collapsable" :class="{ collapse }"></div>
                 <div class="flex-col gap-20 collapsable" :class="{ collapse }">
-                    <div class="flex-col gap-3">
-                        <h5 class="color-text-light ">Brand</h5>
-                        <div class="flex gap-5">
-                            <h4 class="weight-semi-bold">Apple&nbsp;&nbsp;•&nbsp;&nbsp;Samsung</h4>
-                        </div>
-                    </div>
-                    <div class="flex-col gap-3">
-                        <h5 class="color-text-light ">Model</h5>
-                        <div class="flex gap-5">
-                            <h4 class="weight-semi-bold">Apple iPhone X&nbsp;&nbsp;•&nbsp;&nbsp;Apple iPhone 8</h4>
-                        </div>
-                    </div>
-                    <div class="flex-col gap-3">
-                        <h5 class="color-text-light ">Condition</h5>
-                        <div class="flex gap-5">
-                            <h4 class="weight-semi-bold">Used</h4>
+                    <div class="flex-col gap-3" v-for="aspects, name in usePriceCheckerStore().selected_aspects">
+                        <h5 class="color-text-light">{{ name }}</h5>
+                        <div class="flex-col gap-5">
+                            <h4 v-for="aspect in aspects" class="weight-semi-bold">{{ aspect.name }}</h4>
                         </div>
                     </div>
                 </div>
+                <!--
                 <div class="show-more collapsable" :class="{ collapse }">
                     <h5 class="color-text-light weight-semi-bold">+1 more</h5>
                 </div>
+                -->
             </div>
             <div v-else-if="selectedIndex == 1" class="collapsable flex-col gap-20" :class="{ collapse }">
                 <div class="flex gap-20">
@@ -90,7 +83,7 @@
                             <div class="flex-col gap-3">
                                 <h5 class="color-text-light collapsable" :class="{ collapse }">Median Price</h5>
                                 <div class="flex gap-5 align-center">
-                                    <h3>$453.67</h3>
+                                    <h3>{{ median_price }}</h3>
                                 </div>
                             </div>
                             <div class="flex gap-15 color-text-light right-auto height-max">
@@ -116,8 +109,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div @click="barClick" v-for="i in 11" style="height: 50%;" class="bar"
-                                    @mouseenter="showInfo" @mouseleave="killInfo"></div>
+                                <div v-for="(bar, index) in 11" :key="index" @click="barClick" :style="'height: 50%;'"
+                                    class="bar" @mouseenter="showInfo" @mouseleave="killInfo"></div>
                             </div>
                             <div class="flex justify-between">
                                 <h6 class="color-text-light">$128.65</h6>
@@ -129,16 +122,14 @@
 
 
                 </div>
-                <div class="divider light"></div>
                 <div class="listings flex-col gap-15" :class="{ 'active': showListings }">
-                    <div v-for="i in 10" class="listing-card flex gap-5">
+                    <div v-for="item in listings" class="listing-card flex gap-5" @click="listingClick(item)">
                         <div class="hover-indicator"></div>
                         <img src="@/assets/images/example-product.webp" alt="listing-image">
                         <div class="flex-col gap-5">
-                            <h6 class="color-marketplace-green">Sold Jun 27, 2023</h6>
-                            <h5 class="weight-semi-bold">Apple iPhone 14 Plus - 128GB - Midnight A2632 VERIZON OPEN BOX FOR
-                                PARTS - MDM</h5>
-                            <h5 class="color-text-light">Parts Only · Apple iPhone 14 Plus · 128 GB · Verizon</h5>
+                            <h6 class="color-marketplace-green">Sold {{ formattedDate(item.date_sold) }}</h6>
+                            <h5 class="weight-semi-bold">{{ item.title }}</h5>
+                            <h5 class="color-text-light"><span v-for="secondary, si in item.secondary_info">{{ secondary }}<span v-if="si < item.secondary_info.length - 1"> • </span></span></h5>
                             <div class="flex-col gap-3">
                                 <h3 class="color-marketplace-green weight-semi-bold">$254.60</h3>
                                 <h5 class="color-text-light">Buy It Now</h5>
@@ -151,17 +142,23 @@
             </div>
 
         </div>
+        <div class="divider light"></div>
+        <div class="flex gap-20">
+            <Btn size="max">Save Listing</Btn>
+            <Btn secondary size="max">Delete</Btn>
+        </div>
 
     </div>
 </template>
 
 <script setup lang="ts">
-
-defineProps({
+import { usePriceCheckerStore } from '@/stores/price-checker'
+const props = defineProps({
     title: String,
     total_results: String,
     category: String,
-    listings: Array
+    listings: Array,
+    fragile: Boolean
 })
 
 
@@ -181,12 +178,14 @@ const sideItems = [
     'Raw Listings'
 ]
 
-const selectedIndex = ref(1)
+const selectedIndex = ref(0)
 const sideIndex = ref(0)
 
 const collapse = ref(false)
 
 const show_info = ref(false)
+
+
 
 function handleExpand(type: string) {
     if (collapse.value) {
@@ -234,6 +233,21 @@ function barClick() {
 
 const showListings = ref(false)
 
+
+const median_price = computed(() => `$${[...props.listings.map(obj => obj.price.price_value)].sort((a, b) => a - b)[Math.floor(props.listings.length / 2)]}`)
+
+function formattedDate(inputDate: String) {
+    let d = new Date(inputDate)
+    return d.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function listingClick(item) {
+    console.log(item)
+}
 
 </script>
 
@@ -498,4 +512,5 @@ ol.side-selector {
 
     }
 
-}</style>
+}
+</style>

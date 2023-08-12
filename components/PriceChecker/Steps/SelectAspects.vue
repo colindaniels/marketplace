@@ -1,13 +1,12 @@
 <template>
-    <div class="flex-col gap-40" v-if="!pending">
+    <div class="flex-col gap-40">
         <div class="flex-col gap-20">
-            <SlideBtn v-for="(values, name) in usePriceCheckerStore().aspects" @selected="selectAspects" :name="name"
+            <SlideBtn :pending="pending" v-for="(values, name) in usePriceCheckerStore().aspects" @selected="selectAspects" :name="name"
                 :data="values"/>
         </div>
 
         <Btn @click="$emit('nextStep')" class=" left-auto right-auto">Continue</Btn>
     </div>
-    <div v-else>LOADING...</div>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +16,7 @@ const { data, pending } = useFetch('/api/getAspects', { params: { new_url: usePr
 
 watch(data, () => {
     usePriceCheckerStore().aspects = data.value.aspects
+    usePriceCheckerStore().selected_aspects = Object.fromEntries(Object.entries(usePriceCheckerStore().aspects).map(([key, value]) => [key, value.filter(obj => obj.selected === true)]).filter(([, value]) => value.length > 0));
 })
 
 

@@ -1,6 +1,12 @@
 <template>
     <div>
-        <AnalyticsCard v-if="!pending" :title="data?.search_query" :total_results="data?.total_results" :category="usePriceCheckerStore().selected_category.name" :listings="data.items"/>
+        <AnalyticsCard v-if="!pending"
+        :title="data?.search_query"
+        :total_results="data?.total_results"
+        :category="usePriceCheckerStore().selected_category.name"
+        :listings="data.items"
+        fragile
+        />
     </div>
 </template>
 
@@ -10,8 +16,10 @@ const { data, pending } = useFetch('/api/getSoldEbayData', { params: { ebay_url:
 
 
 watch(data, () => {
-    console.log(data.value)
+    console.log(usePriceCheckerStore().aspects)
 })
+
+
 </script>
 
 <style scoped>

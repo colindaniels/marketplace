@@ -1,11 +1,12 @@
 <template>
-    <button :class="{ max: size == 'max', inactive }"><h4><slot/></h4></button>
+    <button :class="{ max: size == 'max', inactive, secondary }"><h4><slot/></h4></button>
 </template>
 
 <script setup lang="ts">
 defineProps({
     size: String,
-    inactive: Boolean
+    inactive: Boolean,
+    secondary: Boolean
 })
 </script>
 
@@ -32,6 +33,14 @@ button {
         border: 2px solid $color-super-light-gray;
         color: $color-text-light;
         pointer-events: none;
+    }
+    &.secondary {
+        background-color: $color-super-light-gray;
+        transition: all 0.1s ease-in-out;
+        color: $color-text-light;
+        &:hover {
+            background-color: $color-light-gray;
+        }
     }
 }
 </style>

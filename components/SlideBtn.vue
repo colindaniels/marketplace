@@ -3,7 +3,7 @@
         <h5 class="weight-semi-bold">{{ name }}</h5>
         <div class="flex-wrap gap-10">
             <div class="btn flex align-center gap-15"
-                :class="{ selected: current_value?.value == d.value || d.selected }" @click="select(d)"
+                :class="{ selected: current_value?.value == d.value || d.selected, pending }" @click="select(d)"
                 v-for="d in data">
                 <div v-if="unique" class="radio"></div>
                 <h5 class="value">{{ d.name }}</h5>
@@ -17,7 +17,8 @@ const props = defineProps({
     name: String,
     data: Array,
     unique: Boolean,
-    current_value: Object
+    current_value: Object,
+    pending: Boolean
 })
 const emit = defineEmits()
 
@@ -44,6 +45,7 @@ function select(d: any) {
     cursor: pointer;
     transition: all 0.1s ease-in-out;
     width: max-content;
+    position: relative;
 
     &:hover {
         background-color: $color-super-light-gray;
@@ -71,6 +73,13 @@ function select(d: any) {
         }
     }
 
+    &.pending {
+        background: linear-gradient(-45deg, $color-light-blue-gray, $color-light-blue-gray-hover);
+        animation: gradient 3s ease infinite;
+        background-size: 400% 400%;
+        pointer-events: none;
+    }
+
     .radio {
         width: 20px;
         height: 20px;
@@ -91,6 +100,21 @@ function select(d: any) {
             border-radius: 50%;
             transition: all 0.1s ease-in-out;
         }
+    }
+}
+
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
     }
 }
 </style>

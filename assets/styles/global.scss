@@ -283,6 +283,12 @@ a {
 .color-status-standby-background {
     background-color: $color-status-standby-background;
 }
+.color-status-error {
+    color: $color-status-error;
+}
+.color-status-error-background {
+    background-color: $color-status-error-background;
+}
 
 .flex-wrap {
     display: flex;
@@ -346,4 +352,12 @@ a {
     &:hover {
         filter: brightness(70%);
     }
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.margin-top-10 {
+    margin-top: 10px;
 }
