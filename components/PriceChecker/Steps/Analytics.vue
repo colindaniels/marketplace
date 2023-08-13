@@ -16,7 +16,7 @@ const { data, pending } = useFetch('/api/getSoldEbayData', { params: { ebay_url:
 
 
 watch(data, () => {
-    console.log(usePriceCheckerStore().aspects)
+    //
 })
 
 

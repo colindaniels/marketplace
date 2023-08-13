@@ -1,17 +1,16 @@
 <template>
-    <div class="card flex-col gap-20" @click="handleExpand('card');" :class="{ collapsed: collapse }">
-        <div class="flex gap-20 clickable" @click.stop="handleExpand('title');">
+    <div :class="{ collapse }" class="card flex-col gap-20" @click="expandCard">
+        <div class="flex gap-20 clickable" @click="collapseCard">
             <img src="@/assets/images/iphone.png" alt="">
             <div class="flex-col gap-5">
                 <h3>{{ title }}</h3>
                 <h4 class="color-text-light">{{ category }}</h4>
             </div>
-            <font-awesome-icon :icon="['fas', 'angle-down']" size="xl" class="right-auto bottom-auto top-auto collapsable"
-                :class="{ collapse }" />
+            <font-awesome-icon :icon="['fas', 'angle-down']" size="xl" class="right-auto bottom-auto top-auto" />
 
         </div>
-        <div class="flex-col gap-20 flex-collapsable" :class="{ 'flex-collapse': collapse }">
-            <div class="selector-box flex collapsable" :class="{ collapse }">
+        <div class="flex-col gap-20 gap-collapse">
+            <div class="selector-box flex collapsable">
                 <div class="selector" :style="{ left: `${selectorLeft}px` }"></div>
                 <ol class="flex height-100">
                     <li class="option" :class="{ selected: selectedIndex == index }" v-for="(menuItem, index) in menuItems"
@@ -20,26 +19,26 @@
                     </li>
                 </ol>
             </div>
-            <div class="divider light collapsable" :class="{ collapse }"></div>
-            <div v-if="selectedIndex == 0" class="flex-col gap-20 flex-collapsable" :class="{ 'flex-collapse': collapse }">
+            <div class="divider light collapsable"></div>
+            <div v-if="selectedIndex == 0" class="flex-col gap-20 gap-collapse">
                 <div class="flex">
-                    <div class="flex-col gap-10 flex-collapsable" :class="{ 'flex-collapse': collapse }">
+                    <div class="flex-col gap-10">
                         <div class="flex-col gap-3">
-                            <h5 class="color-text-light collapsable" :class="{ collapse }">Median Price</h5>
+                            <h5 class="color-text-light collapsable">Median Price</h5>
                             <div class="flex gap-5 align-center">
                                 <h3>{{ median_price }}</h3>
                                 <h5 class="color-status-success weight-bold">3.2%</h5>
                             </div>
                         </div>
-                        <div class="status-box color-status-standby-background collapsable" :class="{ collapse }">
+                        <div class="status-box color-status-standby-background collapsable">
                             <h5 class="color-status-standby">Sold Items Only</h5>
                         </div>
                     </div>
-                    <div class="flex-col gap-10 right-auto collapsable" :class="{ collapse }">
+                    <div class="flex-col gap-10 right-auto collapsable">
                         <div class="flex-col gap-3">
                             <h5 class="color-text-light">Analyzed Listings</h5>
                             <div class="flex gap-5 right-auto">
-                                <h3>{{ listings?.length }}</h3>
+                                <h3>{{ reactive_listings?.length }}</h3>
                             </div>
                         </div>
                         <div class="status-box color-status-error-background right-auto">
@@ -53,22 +52,22 @@
                 </div>
 
 
-                <div class="divider dashed light collapsable" :class="{ collapse }"></div>
-                <div class="flex-col gap-20 collapsable" :class="{ collapse }">
-                    <div class="flex-col gap-3" v-for="aspects, name in usePriceCheckerStore().selected_aspects">
-                        <h5 class="color-text-light">{{ name }}</h5>
-                        <div class="flex-col gap-5">
-                            <h4 v-for="aspect in aspects" class="weight-semi-bold">{{ aspect.name }}</h4>
+                <div class="divider dashed collapsable"></div>
+                <div class="flex-col gap-20 gap-collapse aspects-holder">
+                    <div class="flex-col gap-3 aspects" v-for="aspects, name in usePriceCheckerStore().selected_aspects">
+                        <h5 class="name color-text-light">{{ name }}</h5>
+                        <div class="values flex-col gap-5">
+                            <h4 v-for="aspect in aspects" class="weight-semi-bold value">{{ aspect.name }}</h4>
                         </div>
                     </div>
                 </div>
                 <!--
-                <div class="show-more collapsable" :class="{ collapse }">
+                <div class="show-more">
                     <h5 class="color-text-light weight-semi-bold">+1 more</h5>
                 </div>
                 -->
             </div>
-            <div v-else-if="selectedIndex == 1" class="collapsable flex-col gap-20" :class="{ collapse }">
+            <div v-else-if="selectedIndex == 1" class="flex-col gap-20 collapsable">
                 <div class="flex gap-20">
                     <ol class="side-selector flex-col align-center">
                         <div class="selector" :style="{ top: `${selectorTop}px` }"></div>
@@ -81,7 +80,7 @@
                     <div class="flex-col gap-10 width-100">
                         <div class="flex">
                             <div class="flex-col gap-3">
-                                <h5 class="color-text-light collapsable" :class="{ collapse }">Median Price</h5>
+                                <h5 class="color-text-light">Median Price</h5>
                                 <div class="flex gap-5 align-center">
                                     <h3>{{ median_price }}</h3>
                                 </div>
@@ -101,21 +100,26 @@
                             <div class="content">
                                 <div @mouseenter.prevent="showInfo" @mouseleave="killInfo" class="info-box"
                                     :class="{ active: show_info }"
-                                    :style="{ left: `${mouseX + 5}px`, top: `${mouseY - 5}px` }">
+                                    :style="{ left: `${mouseX + 10}px`, top: `${mouseY - 65}px` }">
                                     <div class="flex-col gap-10">
                                         <div class="flex-col gap-5">
-                                            <h6><span class="color-text-primary weight-bold">10</span> Listings</h6>
+                                            <h6><span class="color-text-primary weight-bold">{{ hover_bins }}</span>
+                                                Listings</h6>
+                                            <h6><span class="color-text-primary weight-bold">${{ min_price_bin }}</span> -
+                                                <span class="color-text-primary weight-bold">${{ max_price_bin }}</span>
+                                            </h6>
                                             <h6 class="weight-bold">Click to see listings</h6>
                                         </div>
                                     </div>
                                 </div>
-                                <div v-for="(bar, index) in 11" :key="index" @click="barClick" :style="'height: 50%;'"
-                                    class="bar" @mouseenter="showInfo" @mouseleave="killInfo"></div>
+                                <div v-for="(binData, index) in bins" :key="index" @click="barClick(binData)"
+                                    :style="{ height: `${(binData.length / top_bin) * 100}%` }" class="bar"
+                                    @mouseenter="showInfo(binData)" @mouseleave="killInfo"></div>
                             </div>
                             <div class="flex justify-between">
-                                <h6 class="color-text-light">$128.65</h6>
-                                <h6 class="color-text-light">$453.67</h6>
-                                <h6 class="color-text-light">$767.12</h6>
+                                <h6 class="color-text-light">${{ min_price }}</h6>
+                                <h6 class="color-text-light">{{ mean_price }}</h6>
+                                <h6 class="color-text-light">${{ max_price }}</h6>
                             </div>
                         </div>
                     </div>
@@ -123,29 +127,35 @@
 
                 </div>
                 <div class="listings flex-col gap-15" :class="{ 'active': showListings }">
-                    <div v-for="item in listings" class="listing-card flex gap-5" @click="listingClick(item)">
+                    <div v-for="item in current_bin_listings" :class="{ excluded: !item.included }"
+                        class="listing-card flex gap-5" @click="listingClick(item)">
                         <div class="hover-indicator"></div>
-                        <img src="@/assets/images/example-product.webp" alt="listing-image">
+                        <img :src="item.image_url" alt="listing-image">
                         <div class="flex-col gap-5">
                             <h6 class="color-marketplace-green">Sold {{ formattedDate(item.date_sold) }}</h6>
                             <h5 class="weight-semi-bold">{{ item.title }}</h5>
-                            <h5 class="color-text-light"><span v-for="secondary, si in item.secondary_info">{{ secondary }}<span v-if="si < item.secondary_info.length - 1"> • </span></span></h5>
+                            <h5 class="color-text-light"><span v-for="secondary, si in item.secondary_info">{{ secondary
+                            }}<span v-if="si < item.secondary_info.length - 1"> • </span></span></h5>
                             <div class="flex-col gap-3">
-                                <h3 class="color-marketplace-green weight-semi-bold">$254.60</h3>
+                                <h3 v-if="item.price.is_price_range" class="color-marketplace-green weight-semi-bold">${{
+                                    item.price.price_lower }} - ${{ item.price.price_upper }}</h3>
+                                <h3 v-else class="color-marketplace-green weight-semi-bold">${{ item.price.price_value }}
+                                </h3>
                                 <h5 class="color-text-light">Buy It Now</h5>
-                                <h5 class="color-text-light">+$8.57 shipping</h5>
+                                <h5 v-if="item.shipping_price == 'Free'" class="color-text-light">Free Shipping</h5>
+                                <h5 v-else-if="item.shipping_price" class="color-text-light">+${{ item.shipping_price }}
+                                </h5>
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-
-        </div>
-        <div class="divider light"></div>
-        <div class="flex gap-20">
-            <Btn size="max">Save Listing</Btn>
-            <Btn secondary size="max">Delete</Btn>
+            <div class="divider light collapsable"></div>
+            <div v-if="fragile" class="flex gap-20 collapsable">
+                <Btn size="max">Save Listing</Btn>
+                <Btn secondary size="max">Delete</Btn>
+            </div>
         </div>
 
     </div>
@@ -180,26 +190,25 @@ const sideItems = [
 
 const selectedIndex = ref(0)
 const sideIndex = ref(0)
-
 const collapse = ref(false)
-
 const show_info = ref(false)
 
 
-
-function handleExpand(type: string) {
+function expandCard(e) {
     if (collapse.value) {
-        // expand
         collapse.value = false
+        e.stopPropagation()
     }
-    else {
-        if (type == 'title') {
-            // collapse
-            collapse.value = true
-        }
+}
+function collapseCard(e) {
+    if (!collapse.value) {
+        collapse.value = true
+        e.stopPropagation()
     }
 
 }
+
+
 
 function handleItemClick(clickedElement) {
     selectorLeft.value = clickedElement.offsetLeft
@@ -210,9 +219,18 @@ function handleSideClick(clickedElement) {
 }
 
 
-function showInfo() {
+const max_price_bin = ref(0)
+const min_price_bin = ref(0)
+
+const hover_bins = ref(0)
+function showInfo(binData) {
+    hover_bins.value = binData.length
+    max_price_bin.value = Math.max(...binData.map(obj => obj.price.price_value));
+    min_price_bin.value = Math.min(...binData.map(obj => obj.price.price_value));
+
     show_info.value = true
     document.addEventListener('mousemove', updatePosition);
+
 }
 function killInfo() {
     show_info.value = false
@@ -227,14 +245,18 @@ const updatePosition = (event) => {
     mouseY.value = event.pageY - window.scrollY
 };
 
-function barClick() {
+function barClick(binData) {
+    current_bin_listings.value = binData
+    //current_bin_listings.value = props.listings
     showListings.value = true;
 }
 
 const showListings = ref(false)
 
 
-const median_price = computed(() => `$${[...props.listings.map(obj => obj.price.price_value)].sort((a, b) => a - b)[Math.floor(props.listings.length / 2)]}`)
+const median_price = computed(() => `$${[...reactive_listings.value.map(obj => obj.price.price_value)].sort((a, b) => a - b)[Math.floor(reactive_listings.value.length / 2)]}`)
+
+const mean_price = computed(() => reactive_listings.value.reduce((sum, obj) => sum + obj.price.price_value, 0) / reactive_listings.value.length)
 
 function formattedDate(inputDate: String) {
     let d = new Date(inputDate)
@@ -245,9 +267,52 @@ function formattedDate(inputDate: String) {
     });
 }
 
-function listingClick(item) {
-    console.log(item)
+function listingClick(listing) {
+    console.log(listing)
 }
+
+const reactive_listings = ref(props.listings)
+
+const bins = ref([])
+const min_price = ref(0)
+const max_price = ref(0)
+
+const top_bin = ref(0)
+
+
+const current_bin_listings = ref([])
+
+
+const calculateBins = () => {
+    const numBins = 11
+    const prices = reactive_listings.value.map(item => item.price.price_value);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    min_price.value = minPrice
+    max_price.value = maxPrice
+
+    const binSize = (maxPrice - minPrice) / numBins;
+
+
+
+    // Initialize bins array with empty arrays
+    bins.value = Array(numBins).fill().map(() => []);
+    // Calculate frequencies for each bin
+    for (const item of reactive_listings.value) {
+        const binIndex = Math.floor((item.price.price_value - minPrice) / binSize);
+        // Ensure binIndex is within bounds
+        const safeBinIndex = Math.min(Math.max(binIndex, 0), numBins - 1);
+
+        bins.value[safeBinIndex].push(item);
+    }
+
+    top_bin.value = Math.max(...bins.value.map(bin => bin.length));
+    console.log(top_bin)
+}
+calculateBins()
+
+
 
 </script>
 
@@ -258,19 +323,64 @@ function listingClick(item) {
     width: max-content;
     box-shadow: $box-shadow;
     border-radius: 15px;
-    transition: all 0.1s ease-in-out;
     position: relative;
-    max-width: 450px;
+    width: 450px;
+    overflow: hidden;
 
     img {
         height: 50px
     }
 }
 
-.card.collapsed:hover {
-    box-shadow: 0px 8px 40px 5px rgba(0, 0, 0, 0.15);
-    transform: translate(5px, -5px);
-    cursor: pointer;
+.card .collapsable {
+    transition: all 0.2s ease-in-out;
+    max-height: 1000px;
+    overflow: hidden;
+}
+
+.card.collapse {
+    .collapsable {
+        max-height: 0;
+        padding: 0;
+        gap: 0;
+        overflow: hidden;
+    }
+
+    .aspects-holder {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 5px !important;
+
+        .aspects {
+            width: max-content;
+
+            .name {
+                width: 0;
+                height: 0;
+                overflow: hidden;
+            }
+
+            .values {
+                flex-direction: row;
+
+                .value {
+                    background-color: $color-super-light-gray;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    font-size: $font-size-small;
+                }
+            }
+        }
+    }
+
+}
+
+.card .gap-collapse {
+    transition: all 0.2s ease-in-out;
+}
+
+.card.collapse .gap-collapse {
+    gap: 0;
 }
 
 .aspect {
@@ -339,24 +449,6 @@ function listingClick(item) {
     }
 }
 
-.collapsable {
-    max-height: 1050px;
-    max-width: 450px;
-}
-
-.collapse {
-    overflow: hidden;
-    max-height: 0;
-    padding: 0;
-    max-width: 0px;
-}
-
-
-
-.flex-collapse {
-    gap: 0;
-}
-
 ol.side-selector {
     background-color: $color-light-blue-gray;
     width: 100px;
@@ -418,8 +510,8 @@ ol.side-selector {
 
         .bar {
             background-color: $color-light-gray;
-            width: 19px;
-            border-radius: 6px 6px 0 0;
+            width: 100%;
+            border-radius: 5px 5px 0 0;
             cursor: pointer;
             transition: all 0.1s ease-in-out;
             position: relative;
@@ -427,6 +519,7 @@ ol.side-selector {
             &:hover {
                 box-shadow: $box-shadow;
                 transform: translate(1px, -2px);
+                background-color: $color-primary;
             }
 
             &.included {
@@ -444,6 +537,7 @@ ol.side-selector {
             display: flex;
             color: $color-text-light;
             padding: 10px;
+            pointer-events: none;
 
             &.active {
                 opacity: 1;
@@ -459,9 +553,10 @@ ol.side-selector {
     transition: all 0.2s ease-in-out;
     position: relative;
     overflow-y: scroll;
+    padding: 0px;
 
     &.active {
-        max-height: 350px;
+        max-height: 550px;
 
         .listing-card {
             padding: 10px;
@@ -470,7 +565,7 @@ ol.side-selector {
             position: relative;
             background-color: white;
             position: relative;
-            box-shadow: inset 0px 0px 5px 3px rgba(0, 0, 0, 0.10);
+            border: 2px solid $color-light-gray;
             cursor: pointer;
 
             img {
@@ -494,7 +589,8 @@ ol.side-selector {
             &:hover {
                 &::before {
                     position: absolute;
-                    content: 'Click to Exclude';
+                    content: 'Click to Exclude from Analytics';
+                    text-align: center;
                     font-size: 20px;
                     color: white;
                     z-index: 1;
@@ -506,6 +602,34 @@ ol.side-selector {
 
                 .hover-indicator {
                     opacity: 0.4;
+                }
+            }
+
+            &.excluded {
+                border: 2px solid $color-status-error;
+
+                &::before {
+                    position: absolute;
+                    content: 'Excluded';
+                    font-size: 20px;
+                    color: white;
+                    z-index: 1;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-weight: bold;
+                }
+
+                .hover-indicator {
+                    opacity: 0.4;
+                }
+
+                &:hover {
+                    border: 2px solid $color-status-success;
+
+                    &::before {
+                        content: 'Add back';
+                    }
                 }
             }
         }

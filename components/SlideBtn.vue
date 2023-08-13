@@ -75,9 +75,11 @@ function select(d: any) {
 
     &.pending {
         background: linear-gradient(-45deg, $color-light-blue-gray, $color-light-blue-gray-hover);
-        animation: gradient 3s ease infinite;
+        animation: gradient 1s ease-in-out infinite;
         background-size: 400% 400%;
         pointer-events: none;
+        border: 2px solid $color-super-light-gray;
+        font-weight: 400;
     }
 
     .radio {

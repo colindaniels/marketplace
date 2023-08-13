@@ -1,6 +1,12 @@
 <template>
     <Section title="Saved Searches">
-        <AnalyticsCard></AnalyticsCard>
+        <AnalyticsCard
+        title="iPhone X"
+        category="Smartphones"
+        total_results="100"
+        :listings="[]"
+        
+        />
     </Section>
 </template>
 

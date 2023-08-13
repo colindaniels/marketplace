@@ -39,19 +39,21 @@ export default defineEventHandler(async (event) => {
     const possible_stars = $(ratings_element).find('.x-star-rating .clipped').text().replace(' stars.', '').split(' out of ')[1] || null
     const ratings_link = $(ratings_element).find('a').attr('href') || null
 
+    var included = true
 
     const price_element = $(item).find('.s-item__price')
     const is_price_range: boolean | null = $(price_element).find('.DEFAULT').text().includes('to')
-    var price_value: number | null = null
-    var price_lower: number | null = null
-    var price_upper: number | null = null
+    var price_value: string | null = null
+    var price_lower: string | null = null
+    var price_upper: string | null = null
     var total_bids: number | null = null
     if (is_price_range) {
-      price_lower = parseFloat($(price_element).find(':not(.DEFAULT)').map((i, el) => $(el).text()).get()[0])
-      price_upper = parseFloat($(price_element).find(':not(.DEFAULT)').map((i, el) => $(el).text()).get()[1])
+      price_lower = parseFloat($(price_element).find(':not(.DEFAULT)').map((i, el) => $(el).text()).get()[0].replaceAll('$', '').replaceAll(',', '')).toFixed(2)
+      price_upper = parseFloat($(price_element).find(':not(.DEFAULT)').map((i, el) => $(el).text()).get()[1].replaceAll('$', '').replaceAll(',', '')).toFixed(2)
+      included = false
     }
     else {
-      price_value = parseFloat($(price_element).text().trim().replaceAll('$', '').replaceAll(',', ''))
+      price_value = parseFloat($(price_element).text().trim().replaceAll('$', '').replaceAll(',', '')).toFixed(2)
     }
     var buying_format = null
     if ($(item).find('.s-item__purchase-options').text().includes('Buy It Now')) {
@@ -64,7 +66,6 @@ export default defineEventHandler(async (event) => {
     else if ($(item).find('.s-item__purchase-options').text().includes('or Best Offer')) {
       buying_format = 'Accepts Offers'
     }
-
 
     const shipping_price = $(item).find('.s-item__shipping').text().replace('+$', '').replace('shipping', '').trim() || null
     const is_free_returns = !!$(item).find('.s-item__free-returns').text() || null
@@ -107,7 +108,8 @@ export default defineEventHandler(async (event) => {
                 is_ebay_refurbished,
                 is_benefits_charity
               },
-              from_location
+              from_location,
+              included
             })
 
     function getDirectTextContent(element: any) {
