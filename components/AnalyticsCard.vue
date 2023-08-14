@@ -38,14 +38,14 @@
                         <div class="flex-col gap-3">
                             <h5 class="color-text-light">Analyzed Listings</h5>
                             <div class="flex gap-5 right-auto">
-                                <h3>{{ reactive_listings?.length }}</h3>
+                                <h3>{{ included_listings.length }}</h3>
                             </div>
                         </div>
                         <div class="status-box color-status-error-background right-auto">
-                            <h5 class="color-status-error">12 excluded</h5>
+                            <h5 class="color-status-error">{{ removed_listings.length }} excluded</h5>
                         </div>
                         <div class="status-box color-status-standby-background right-auto">
-                            <h5 class="color-status-standby">{{ total_results }} total</h5>
+                            <!--<h5 class="color-status-standby">{{ total_results }} total</h5>-->
                         </div>
                     </div>
 
@@ -112,13 +112,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-for="(binData, index) in bins" :key="index" @click="barClick(binData)"
+                                <div class="average-line" :style="`left: ${mean_percent}%;`">
+                                    <div class="average-price">${{ mean_price }}</div>
+                                </div>
+                                <div v-for="(binData, index) in bins" :key="index"
+                                    :class="{ selected: bin_index == index && showListings }" @click="barClick(index)"
                                     :style="{ height: `${(binData.length / top_bin) * 100}%` }" class="bar"
                                     @mouseenter="showInfo(binData)" @mouseleave="killInfo"></div>
                             </div>
                             <div class="flex justify-between">
                                 <h6 class="color-text-light">${{ min_price }}</h6>
-                                <h6 class="color-text-light">{{ mean_price }}</h6>
                                 <h6 class="color-text-light">${{ max_price }}</h6>
                             </div>
                         </div>
@@ -127,8 +130,7 @@
 
                 </div>
                 <div class="listings flex-col gap-15" :class="{ 'active': showListings }">
-                    <div v-for="item in current_bin_listings" :class="{ excluded: !item.included }"
-                        class="listing-card flex gap-5" @click="listingClick(item)">
+                    <div v-for="item in current_bin_listings" class="listing-card flex gap-5" @click="listingClick(item)">
                         <div class="hover-indicator"></div>
                         <img :src="item.image_url" alt="listing-image">
                         <div class="flex-col gap-5">
@@ -185,7 +187,7 @@ const sideItems = [
     'Price Change',
     'Demand',
     'Auction / BIN',
-    'Raw Listings'
+    'Removed'
 ]
 
 const selectedIndex = ref(0)
@@ -207,7 +209,11 @@ function collapseCard(e) {
     }
 
 }
+const reactive_listings = ref(props.listings)
 
+const removed_listings = computed(() => reactive_listings.value.filter(item => !item.included))
+
+const included_listings = computed(() => reactive_listings.value.filter(item => item.included))
 
 
 function handleItemClick(clickedElement) {
@@ -245,18 +251,31 @@ const updatePosition = (event) => {
     mouseY.value = event.pageY - window.scrollY
 };
 
-function barClick(binData) {
-    current_bin_listings.value = binData
-    //current_bin_listings.value = props.listings
-    showListings.value = true;
+const bin_index = ref(null)
+
+
+
+function barClick(index) {
+    if (bin_index.value === index) {
+        showListings.value = false
+        bin_index.value = null
+    }
+    else {
+        showListings.value = true
+        bin_index.value = index
+    }
 }
 
 const showListings = ref(false)
 
+const min_price = ref(0)
+const max_price = ref(0)
+const median_price = computed(() => `$${included_listings.value.map(obj => obj.price.price_value).sort((a, b) => a - b)[Math.floor(included_listings.value.length / 2)]}`)
+const sum = computed(() => Number(included_listings.value.map(obj => Number(obj.price.price_value)).reduce((acc, value) => acc + value, 0).toFixed(2)))
+const mean_price = computed(() => Number((sum.value / included_listings.value.length).toFixed(2)))
 
-const median_price = computed(() => `$${[...reactive_listings.value.map(obj => obj.price.price_value)].sort((a, b) => a - b)[Math.floor(reactive_listings.value.length / 2)]}`)
+const mean_percent = computed(() => ((mean_price.value - min_price.value) / (max_price.value - min_price.value)) * 100);
 
-const mean_price = computed(() => reactive_listings.value.reduce((sum, obj) => sum + obj.price.price_value, 0) / reactive_listings.value.length)
 
 function formattedDate(inputDate: String) {
     let d = new Date(inputDate)
@@ -268,50 +287,53 @@ function formattedDate(inputDate: String) {
 }
 
 function listingClick(listing) {
-    console.log(listing)
+    reactive_listings.value.forEach((item, index) => {
+        if (listing.id === item.id) {
+            let selected_item = reactive_listings.value[index]
+            selected_item.included = !selected_item.included
+        }
+    })
+    calculateBins()
 }
 
-const reactive_listings = ref(props.listings)
 
 const bins = ref([])
-const min_price = ref(0)
-const max_price = ref(0)
+
+const current_bin_listings = computed(() => bins.value[bin_index.value])
+
 
 const top_bin = ref(0)
 
+const numBins = ref(8)
 
-const current_bin_listings = ref([])
 
 
 const calculateBins = () => {
-    const numBins = 11
-    const prices = reactive_listings.value.map(item => item.price.price_value);
+    const prices = included_listings.value.map(item => item.price.price_value);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
 
     min_price.value = minPrice
     max_price.value = maxPrice
 
-    const binSize = (maxPrice - minPrice) / numBins;
+    const binSize = (maxPrice - minPrice) / numBins.value;
 
 
 
     // Initialize bins array with empty arrays
-    bins.value = Array(numBins).fill().map(() => []);
+    bins.value = []
+    bins.value = Array(numBins.value).fill().map(() => []);
     // Calculate frequencies for each bin
-    for (const item of reactive_listings.value) {
+    for (const item of included_listings.value) {
         const binIndex = Math.floor((item.price.price_value - minPrice) / binSize);
         // Ensure binIndex is within bounds
-        const safeBinIndex = Math.min(Math.max(binIndex, 0), numBins - 1);
-
+        const safeBinIndex = Math.min(Math.max(binIndex, 0), numBins.value - 1);
         bins.value[safeBinIndex].push(item);
     }
 
     top_bin.value = Math.max(...bins.value.map(bin => bin.length));
-    console.log(top_bin)
 }
 calculateBins()
-
 
 
 </script>
@@ -518,7 +540,10 @@ ol.side-selector {
 
             &:hover {
                 box-shadow: $box-shadow;
-                transform: translate(1px, -2px);
+                background-color: $color-primary-hover;
+            }
+
+            &.selected {
                 background-color: $color-primary;
             }
 
@@ -541,7 +566,38 @@ ol.side-selector {
 
             &.active {
                 opacity: 1;
-                z-index: 1;
+                z-index: 2;
+            }
+        }
+
+        .average-line {
+            position: absolute;
+            height: 100%;
+            width: 3px;
+            border-radius: 1px;
+            background: linear-gradient(to top, #ED7575 60%, transparent 0);
+            background-size: 100% 15px;
+            z-index: 1;
+            pointer-events: none;
+
+            ::after {
+                position: absolute;
+                content: 'Average';
+                top: 13px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-weight: 400;
+            }
+
+            .average-price {
+                position: absolute;
+                left: 50%;
+                top: calc(100% + 5px);
+                font-size: $font-size-tiny;
+                color: $color-status-error;
+                font-weight: 600;
+                transform: translateX(-50%);
+                pointer-events: all;
             }
         }
     }

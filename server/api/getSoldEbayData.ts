@@ -1,5 +1,10 @@
 import axios from 'axios'
 import { load } from 'cheerio'
+import { v4 as uuidv4 } from 'uuid';
+
+function generateRandomID() {
+  return uuidv4();
+}
 
 export default defineEventHandler(async (event) => {
   var ebay_url = getQuery(event).ebay_url as string
@@ -40,7 +45,6 @@ export default defineEventHandler(async (event) => {
     const ratings_link = $(ratings_element).find('a').attr('href') || null
 
     var included = true
-
     const price_element = $(item).find('.s-item__price')
     const is_price_range: boolean | null = $(price_element).find('.DEFAULT').text().includes('to')
     var price_value: string | null = null
@@ -81,6 +85,7 @@ export default defineEventHandler(async (event) => {
 
 
             items.push({
+              id: generateRandomID(),
               title,
               date_sold,
               secondary_info,
@@ -129,7 +134,7 @@ export default defineEventHandler(async (event) => {
       expected_search_query,
       disreguard_spell_check_link
     },
-    items
+    items,
   }
 
 })
