@@ -126,6 +126,7 @@
                             </div>
                         </div>
                     </div>
+                    
 
 
                 </div>
@@ -193,7 +194,7 @@ const sideItems = [
 const selectedIndex = ref(0)
 const sideIndex = ref(0)
 const collapse = ref(false)
-const show_info = ref(false)
+const show_info = ref(true)
 
 
 function expandCard(e) {
@@ -304,7 +305,7 @@ const current_bin_listings = computed(() => bins.value[bin_index.value])
 
 const top_bin = ref(0)
 
-const numBins = ref(8)
+const numBins = computed(() => Math.ceil(1 + 3.322 * Math.log10(included_listings.value.length)))
 
 
 
